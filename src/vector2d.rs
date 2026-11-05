@@ -52,3 +52,35 @@ impl Vec2D {
         }
     }    
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    const EPSILON: f64 = 1e-12;
+
+    #[test]
+    fn test_magnitude() {
+        let v = Vec2D {x:3.0, y: 4.0};
+
+        assert!((v.magnitude()-5.0).abs() < EPSILON);
+    }
+
+    #[test]
+    fn test_limit() {
+        let v = Vec2D { x: 3.0, y: 4.0};
+        let limited = v.limit(2.0);
+
+        assert!((limited.x - 1.2).abs() < EPSILON);
+        assert!((limited.y - 1.6).abs() < EPSILON);
+    }
+
+    #[test]
+    fn test_add() {
+        let v = Vec2D { x: 2.0, y: 3.0};
+        let w = Vec2D { x: 4.0, y: -1.0};
+        let sum = v.add(&w);
+
+        assert!((sum.x - 6.0).abs() < EPSILON, "Expected x = 6.0 got {}");
+        assert!((sum.y - 2.0).abs() < EPSILON, "Expected y = 2.0 got {}");
+    }
+}
