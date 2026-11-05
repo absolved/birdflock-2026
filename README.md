@@ -90,14 +90,12 @@ Each bird follows three local interaction rules:
 
 The acceleration of bird $i$ is calculated as:
 
-$$
-\mathbf{a}i =
-k_s\mathbf{f}{s,i}
-
-k_a\mathbf{f}_{a,i}
-
-k_c\mathbf{f}_{c,i}
-$$
+```math
+\mathbf{a}_i =
+k_s\mathbf{f}_{s,i}
++ k_a\mathbf{f}_{a,i}
++ k_c\mathbf{f}_{c,i}
+```
 
 where the gains control the relative influence of each behavior.
 
