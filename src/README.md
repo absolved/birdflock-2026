@@ -82,26 +82,96 @@ The Simulation struct manages bird state, integration, and spatial indexing. The
 
 ## Simulation Model
 
-Each bird follows three local interaction rules:
+## Flocking Dynamics
 
-1. **Separation**: Steer away from nearby birds to reduce crowding.
-2. **Alignment**: Adjust velocity toward the average velocity of neighboring birds.
-3. **Cohesion**: Steer toward the local center of neighboring birds.
-
-The acceleration of bird $i$ is calculated as:
+Each bird's acceleration is calculated from four behavioral components:
 
 ```math
 \mathbf{a}_i =
-k_s\mathbf{f}_{s,i}
-+ k_a\mathbf{f}_{a,i}
-+ k_c\mathbf{f}_{c,i}
+\mathbf{a}_{s,i}
++ \mathbf{a}_{c,i}
++ \mathbf{a}_{a,i}
++ \mathbf{a}_{g,i}
 ```
+
+### Separation
+
+Nonlinear repulsion from nearby birds:
+
+```math
+\mathbf{a}_{s,i}
+=
+k_s \sum_{\substack{j\in\mathcal{N}_i\\0<d_{ij}<r_s}}
+\frac{\mathbf{d}_{ji}}{d_{ij}}
+\left(
+\frac{r_s-d_{ij}}{d_{ij}+\varepsilon}
+\right)^2
+```
+
+### Cohesion
+
+Attraction toward the average displacement of neighboring birds:
+
+```math
+\mathbf{a}_{c,i}
+=
+\frac{k_c}{|\mathcal{N}_i|}
+\sum_{j\in\mathcal{N}_i}\mathbf{d}_{ij}
+```
+
+### Alignment
+
+Steering toward the average neighbor velocity, normalized
+to the maximum desired speed:
+
+```math
+\mathbf{a}_{a,i}
+=
+k_a\left(
+v_{\max}
+\frac{\bar{\mathbf{v}}_i}{\|\bar{\mathbf{v}}_i\|}
+-\mathbf{v}_i
+\right)
+```
+
+where:
+
+```math
+\bar{\mathbf{v}}_i =
+\frac{1}{|\mathcal{N}_i|}
+\sum_{j\in\mathcal{N}_i}\mathbf{v}_j
+```
+
+### Global Cohesion
+
+Attraction toward a shared, periodically changing random destination:
+
+```math
+\mathbf{a}_{g,i}
+=
+k_g(\mathbf{p}_g-\mathbf{p}_i)
+```
+### Notation
+
+- `i`: Current bird
+- `j`: Neighboring bird
+- `N_i`: Set of neighbors of bird `i`
+- `p_i`: Position of bird `i`
+- `v_i`: Velocity of bird `i`
+- `p_g`: Shared global destination
+- `d_ij`: Shortest periodic displacement from bird `i` to bird `j`
+- `d_ji`: Shortest periodic displacement from bird `j` to bird `i`
+- `d_ij` (scalar): Distance between birds `i` and `j`
+- `r_s`: Separation radius
+- `v_max`: Maximum bird speed
+- `epsilon`: Small regularization constant
+- `k_s`, `k_c`, `k_a`, `k_g`: Behavioral gains
 
 where the gains control the relative influence of each behavior.
 
 Bird velocities and positions are updated using fixed-timestep numerical integration, subject to a maximum speed constraint.
 
-### Spatial Partitioning
+## Spatial Partitioning
 
 A uniform spatial grid partitions the simulation domain into cells. Neighbor searches examine nearby cells rather than comparing every bird against every other bird.
 
@@ -109,7 +179,7 @@ This reduces the number of distance calculations for typical spatial distributio
 
 Periodic boundary conditions are applied to both bird positions and relative displacement calculations.
 
-### Time Stepping
+## Time Stepping
 
 Simulation updates use a fixed timestep and an accumulator that tracks elapsed rendering time.
 

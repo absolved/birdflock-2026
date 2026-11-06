@@ -35,7 +35,6 @@ fn separation(
             let displacement = bird_j.position().periodic_displacement(&bird_i.position(),sim_width,sim_height);
             let distance = displacement.magnitude();
             if distance > 1e-6 && distance < separation_radius {
-                // let contribution = displacement.scale(1.0/(distance*distance));
                 let mut separation_ratio = ((separation_radius-distance)/(distance+epsilon)).powi(2);
                 let contribution = displacement.scale(1.0/distance).scale(separation_ratio);
                 separation = separation.add(&contribution);
