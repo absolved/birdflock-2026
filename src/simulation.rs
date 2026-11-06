@@ -14,6 +14,9 @@ pub struct Simulation {
     accumulator: f64,
     accelerations: Vec<Vec2D>,
     grid: SpatialGrid,
+    rng: rand::rngs::ThreadRng,
+    flock_destination: Vec2D,
+    destination_timer: f64,
 }
 
 impl Simulation {
@@ -38,8 +41,10 @@ impl Simulation {
     }
     pub fn new(birds: Vec<Bird>, dt: f64, params: FlockParameters) -> Self {
         let grid = SpatialGrid::new(params.sim_width,params.sim_height,params.cell_size);
-        let accelerations = Vec::with_capacity(birds.len()); 
-        Simulation {birds,params,dt,accumulator:0.0,accelerations,grid}        
+        let accelerations = Vec::with_capacity(birds.len());
+        let mut rng = rand::rng();
+        let flock_destination = Vec2D { x: rng.random_range(0.0..params.sim_width),y: rng.random_range(0.0..params.sim_height),}; 
+        Simulation {birds,params,dt,accumulator:0.0,accelerations,grid,rng,flock_destination,destination_timer:0.0}        
     }
     pub fn new_random(flock_size: usize, dt: f64, params: FlockParameters) -> Self {
         let mut rng = rand::rng();
@@ -78,12 +83,23 @@ impl Simulation {
     pub fn flock_size(&self) -> usize {
         self.birds.len()
     }
+    pub fn update_destination(&mut self) {
+        self.destination_timer += self.dt;
+
+        if self.destination_timer >= self.params.destination_interval {
+            self.flock_destination = Vec2D {x: self.rng.random_range(0.0..self.params.sim_width),y: self.rng.random_range(0.0..self.params.sim_height),};
+            self.destination_timer -= self.params.destination_interval;
+        }
+
+    }
+
     pub fn step(&mut self) {
+        self.update_destination();
         self.grid.rebuild(&self.birds);
         let count = self.birds.len();
         self.accelerations.clear();
         for index in 0..count { // first find each bird neighbors and calculate acceleration
-            let acceleration = calculate_acceleration(&self.birds,index,&self.params,&self.grid);
+            let acceleration = calculate_acceleration(&self.birds,index,&self.params,&self.grid,&self.flock_destination);
             self.accelerations.push(acceleration);               
         } 
         for (index,bird) in self.birds.iter_mut().enumerate() { // next update the birds using accelerations

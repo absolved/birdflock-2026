@@ -24,11 +24,13 @@ pub fn draw_birds(birds: &[Bird], params: &FlockParameters) {
 
 pub fn draw_hud(params: &FlockParameters) {
     let sep_message = format!("Q/A Separation: {:.2}", params.separation_gain);
-    draw_text(&sep_message, 20.0, screen_height()-35.0, 20.0, WHITE);
+    draw_text(&sep_message, 20.0, screen_height()-50.0, 20.0, WHITE);
     let coh_message = format!("W/S Cohesion: {:.2}", params.cohesion_gain);
-    draw_text(&coh_message, 20.0, screen_height()-20.0, 20.0, WHITE);
+    draw_text(&coh_message, 20.0, screen_height()-35.0, 20.0, WHITE);
     let ali_message = format!("E/D Alignment: {:.2}", params.alignment_gain);
-    draw_text(&ali_message, 20.0, screen_height()-5.0, 20.0, WHITE);    
+    draw_text(&ali_message, 20.0, screen_height()-20.0, 20.0, WHITE);
+    let destination_message = format!("R/F Destination: {:.2}", params.global_cohesion_gain);
+    draw_text(&destination_message, 20.0, screen_height()-5.0, 20.0, WHITE);        
 }
 
 fn rotate_point(point: Vec2, angle: f32) -> Vec2 {

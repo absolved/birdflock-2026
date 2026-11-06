@@ -9,15 +9,20 @@ use macroquad::prelude::*;
 async fn main() {
 
     let params = FlockParameters {
-        separation_gain: 1.5,
-        cohesion_gain: 0.05,
-        alignment_gain: 0.5,
-        neighbor_radius: 5.0,
+        separation_gain: 15.0,
+        cohesion_gain: 0.01,
+        alignment_gain: 0.25,
+        global_cohesion_gain : 0.1,
+        neighbor_radius: 10.0,
+        separation_radius: 8.0,
+        collision_radius: 2.0,
         max_speed: 50.0,
+        alignment_speed_gain: 0.25,
         sim_width: 100.0,
         sim_height: 100.0,
         cell_size: 5.0,
         bird_size: 10.0,
+        destination_interval: 1.0,
     };
     let flock_size = 100;
     let dt = 0.01;
@@ -30,7 +35,7 @@ async fn main() {
     //     let avg_exec_time = simulation.benchmark(100);
     //     println!("Average step time for flock of size {:?} = {:?} ms ",flocksize,avg_exec_time);
     // }
-
+    println!("screen height in pixels {}",screen_width());
     loop {
         if is_key_pressed(KeyCode::Q) {
             simulation.params_mut().separation_gain += 0.1;
@@ -49,6 +54,12 @@ async fn main() {
         }
         if is_key_pressed(KeyCode::D) {
             simulation.params_mut().alignment_gain = (simulation.params().alignment_gain - 0.1).max(0.0);
+        }
+        if is_key_pressed(KeyCode::R) {
+            simulation.params_mut().global_cohesion_gain += 0.01;
+        }
+        if is_key_pressed(KeyCode::F) {
+            simulation.params_mut().global_cohesion_gain = (simulation.params().global_cohesion_gain - 0.01).max(0.0);
         }
         simulation.advance(get_frame_time() as f64);
         clear_background(BLACK);
