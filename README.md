@@ -101,11 +101,15 @@ Nonlinear repulsion from nearby birds:
 ```math
 \mathbf{a}_{s,i}
 =
-k_s \sum_{\substack{j\in\mathcal{N}_i\\0<d_{ij}<r_s}}
+k_s \sum_{j \in \mathcal{N}_i^{s}}
 \frac{\mathbf{d}_{ji}}{d_{ij}}
-\left(
-\frac{r_s-d_{ij}}{d_{ij}+\varepsilon}
-\right)^2
+\left(\frac{r_s-d_{ij}}{d_{ij}+\varepsilon}\right)^2
+```
+
+```math
+\mathcal{N}_i^{s}
+=
+\{j \in \mathcal{N}_i : 0 < d_{ij} < r_s\}
 ```
 
 ### Cohesion
