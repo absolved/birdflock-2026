@@ -80,7 +80,49 @@ mod tests {
         let w = Vec2D { x: 4.0, y: -1.0};
         let sum = v.add(&w);
 
-        assert!((sum.x - 6.0).abs() < EPSILON, "Expected x = 6.0 got {}");
-        assert!((sum.y - 2.0).abs() < EPSILON, "Expected y = 2.0 got {}");
+        assert!((sum.x - 6.0).abs() < EPSILON, "Expected x = 6.0 got {}", sum.x);
+        assert!((sum.y - 2.0).abs() < EPSILON, "Expected y = 2.0 got {}", sum.y);
+    }
+
+    #[test]
+    fn test_subtract() {
+        let v = Vec2D { x: 5.0, y: 7.0};
+        let w = Vec2D { x: 3.0, y: -4.0};
+        let diff = v.subtract(&w);
+
+        assert!((diff.x - 2.0).abs() < EPSILON, "Expected x = 2.0 got {}", diff.x);
+        assert!((diff.y - 11.0).abs() < EPSILON, "Expected y = 11.0 got {}", diff.y);
+    }
+
+    #[test]
+    fn test_scale() {
+        let w = Vec2D { x: 3.0, y: -4.0};
+        let w_scaled = w.scale(2.5);
+
+        assert!((w_scaled.x-7.5).abs() < EPSILON, "Expected x = 7.5 got {}", w_scaled.x);
+        assert!((w_scaled.y+10.0).abs() < EPSILON, "Expected y = -10.0 got {}", w_scaled.y);
+    }
+
+    #[test]
+    fn test_wrap() {
+        let w = Vec2D { x: 105.0, y: -5.0};
+        let width = 100.0;
+        let height = 100.0;
+        let w_wrapped = w.wrap(width, height);
+
+        assert!((w_wrapped.x-5.0).abs() < EPSILON, "Expected x = 5.0 got {}", w_wrapped.x);
+        assert!((w_wrapped.y-95.0).abs() < EPSILON, "Expected y = 95.0 got {}", w_wrapped.y);
+    }
+
+    #[test]
+    fn test_periodic_displacement() {
+        let v = Vec2D { x: 98.0, y: 50.0};
+        let w = Vec2D { x: 2.0, y: 50.0};
+        let width = 100.0;
+        let height = 100.0;
+        let v_periodic_diff = v.periodic_displacement(&w, width, height);
+
+        assert!((v_periodic_diff.x-4.0).abs() < EPSILON, "Expected x = 4.0 got {}", v_periodic_diff.x);
+        assert!((v_periodic_diff.y-0.0).abs() < EPSILON, "Expected y = 0.0 got {}", v_periodic_diff.y);
     }
 }
