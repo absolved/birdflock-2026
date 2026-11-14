@@ -20,9 +20,10 @@ async fn main() {
         alignment_speed_gain: 0.25,
         sim_width: 100.0,
         sim_height: 100.0,
-        cell_size: 5.0,
+        cell_size: 10.0,
         bird_size: 10.0,
         destination_interval: 1.0,
+        separation_softening: 0.1,
     };
     let flock_size = 100;
     let dt = 0.01;
